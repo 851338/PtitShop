@@ -1,0 +1,340 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="stylesheet" type="text/css" th:href=@{/template/style.css}>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" th:href=@{/dropdownstyle.css}>
+	<script type="text/javascript" src="template/script.js"></script>
+</head>
+<body>
+
+	<section class="sidea">
+		<div class="menu">
+			<div class="home-icon"></div>
+			<ul class="menu-ul">
+				<li class="menu-li-home">Trang chủ</li>
+
+				<li class="menu-li-product" id = "down-products" >Sản phẩm</li>
+				<div class="dropdown-box-product">
+					<li class="dropdown-content">Danh sách sản phẩm</li>
+					<li class="dropdown-content">Quản lý kho</li>
+					<li class="dropdown-content" onclick="switchCategory()">Loại sản phẩm</li>
+					<li class="dropdown-content">Nhập hàng</li>
+					<li class="dropdown-content">Nhà cung cấp</li>
+				</div>	
+
+				<li class="menu-li-customer">Khách hàng</li>
+
+				<li class="menu-li-employee" onclick="switchEmployee()">Nhân viên</li>
+
+				<li class="menu-li-report">Báo cáo</li>
+				<div class="dropdown-box-report">
+					<li class="dropdown-content" onclick="switchReportCustomer()">Thống kê khách hàng theo doanh thu</li>
+					<li class="dropdown-content" onclick="switchReportProduct()">Thống kê sản phẩm theo doanh thu</li>
+				</div>
+			</ul>
+		</div>
+	</section>
+
+
+	<section class="sideb-employee" id="employee">
+		<div class="header">
+			<div class="nametag">Nhân viên</div>
+
+			<button class="addemployee" onclick="openFormAddEmployee()">Thêm mới nhân viên</button>
+
+		</div>
+		<div class="container">
+			<div class="search"><input type="text" id="searchEmployee" class="searchBar" placeholder="Tìm kiếm..."> <input type="submit" id="myBtn" value="Submit"></div>
+			<script>
+				var input = document.getElementById("searchEmployee");
+				input.addEventListener("keyup", function(event) {
+    			if (event.keyCode === 13) {
+      			  event.preventDefault();
+       			 document.getElementById("myBtn").click();
+		    	}
+				});
+</script>
+			<form  action="#" th:action="@{/lsp}" th:object="${nv}"
+			method="post">
+			<table class="tbl">
+				<tr class="tr-border-bottom"  >
+					<td >Mã</td>
+					<td >Tên nhân viên</td>
+					<td >SĐT</td>
+					<td>Email</td>
+					<td >Địa chỉ</td>
+					<td >Vai trò</td>
+					<td>Ngày thêm</td>
+					<td>Sửa</td>
+					<td>Xóa</td>
+				</tr>
+				<tr class="tr-border-bottom" th:each="nv : ${listNv}" >
+					<td th:text="${nv.id}"></td>
+					<td th:text="${nv.ten}"></td>
+					<td th:text="${nv.sdt}"></td>
+					<td  th:text="${nv.email}"></td>
+					<td th:text="${nv.dia_chi}"></td>
+					<td th:text="${nv.vai_tro}"></td>
+					<td  th:text="${nv.ngay_tao}"></td>
+					<td><a th:href="@{'/lsp/suaNv/' + ${nv.id}}"><img src="img/update.png" alt="" onclick="openFormEditEmployee()"></a></td>
+					<td><a th:href="@{'/lsp/xoaNv/' + ${nv.id}}"><img src="img/delete.png" alt="" onclick="test()"></a></td>
+				</tr>
+			
+				
+			</table>
+				</form>
+			<div id="add-employee-fullscreen-container">
+
+				<div class="form-popup" id="myForm">
+					<form method="POST" th:action="@{/lsp/nv}" th:object="${nv}" class="form-container">
+						<h1>Thêm mới nhân viên</h1>
+
+						<div class="left-container">
+							<label for="employeeName" id="en"><b>Tên nhân viên</b></label>
+							<input type="text" placeholder=" Nhập tên" name="employeeName" th:field="*{ten}" required>
+
+							<label for="employeeEmail"><b>Email</b></label>
+							<input type="text" placeholder=" Nhập email" name="employeeEmail" th:field="*{email}">
+
+							<label for="employeePhone" id="ep"><b>SĐT</b></label>
+							<input type="text" placeholder=" Nhập sđt" name="employeePhone" th:field="*{sdt}" required>
+						</div>
+
+						<div class="right-container">
+							<label for="employeeAddress"><b>Địa chỉ</b></label>
+							<input type="text" placeholder=" Nhập địa chỉ" name="employeeAddress" th:field="*{dia_chi}">
+
+							<label for="role" id="role"><b>Vai trò</b></label>
+							<input type="text" placeholder=" Vai trò" name="role" th:field="*{vai_tro}" required>
+
+							<button type="button" class="btn cancel" onclick="closeFormAddEmployee()">Thoát</button>
+							<button type="submit" value = "submit" class="btn submit" onclick="javascript:alert('Thêm nhân viên thành công!')">Thêm</button>
+						</div>
+					</form>
+
+				</div>
+			</div>
+			<div id="edit-employee-fullscreen-container">
+
+				<div class="form-popup" id="myForm">
+					<form action="" class="form-container">
+						<h1>Chỉnh sửa nhân viên</h1>
+
+						<div class="left-container">
+							<label for="employeeName" id="en"><b>Tên nhân viên</b></label>
+							<input type="text" placeholder=" Nhập tên" name="employeeName" required>
+
+							<label for="employeeEmail"><b>Email</b></label>
+							<input type="text" placeholder=" Nhập email" name="employeeEmail">
+
+							<label for="employeePhone" id="ep"><b>SĐT</b></label>
+							<input type="text" placeholder=" Nhập sđt" name="employeePhone" required>
+						</div>
+
+						<div class="right-container">
+							<label for="employeeAddress"><b>Địa chỉ</b></label>
+							<input type="text" placeholder=" Nhập địa chỉ" name="employeeAddress">
+
+							<label for="role" id="role"><b>Vai trò</b></label>
+							<input type="text" placeholder=" Vai trò" name="role" required>
+
+							<button type="button" class="btn cancel" onclick="closeFormEditEmployee()">Thoát</button>
+							<button type="submit" class="btn submit">Sửa</button>
+						</div>
+					</form>
+
+				</div>
+			
+		</div>
+	</section>
+
+
+	<section class="sideb-category" id="category">
+	
+		<div class="header">
+			<div class="nametag">Loại sản phẩm</div>
+
+			<button class="addcategory" onclick="openFormAddCategory()">Thêm mới loại sản phẩm</button>
+
+		</div>
+		<div class="container">
+			<div class="search"><input type="text" class="searchBar" placeholder="Tìm kiếm..."></div>
+			<form  action="#" th:action="@{/lsp}" th:object="${lsp}"
+			method="post">
+			<table class="tbl">
+				<tr class="tr-border-bottom">
+					<td>Loại sản phẩm</td>
+					<td>Mã</td>
+					<td>Ghi chú</td>
+					<td>Ngày tạo</td>
+					<td>Sửa</td>
+					<td>Xóa</td>
+				</tr>
+				<tr  class="tr-border-bottom" th:each="lsp : ${listLsp}" >
+					<td th:text="${lsp.id}"></td>
+					<td th:text="${lsp.ten_loai}"></td>
+					<td th:text="${lsp.ghi_chu}"></td>
+					<td th:text="${lsp.ngay_tao}"></td>
+					<td><a th:href="@{'/lsp/sua/' + ${lsp.id}}"><img src="img/update.png" alt="" onclick="openFormEditCategory()"></a></td>
+					<td><a th:href="@{'/lsp/xoa/' + ${lsp.id}}"><img src="img/delete.png" alt="" ></a></td>
+				</tr>
+			
+			</table>
+			</form>
+			<div id="add-category-fullscreen-container">
+
+				<div class="form-popup" id="myForm">
+					<form method="POST" th:action="@{/lsp}" th:object="${lsp}" class="form-container">
+						<h1>Thêm mới loại sản phẩm</h1>
+
+						<div class="first-container">
+							<label for="categoryname" id="cn"><b>Tên loại sản phẩm</b></label>
+							<input type="text" placeholder=" Nhập tên" name="categoryName" th:field="*{ten_loai}" required>
+						</div>
+
+						<div class="second-container">
+							<label for="categorycode" id="cc"><b>Mã sản phẩm</b></label>
+							<input type="text" placeholder=" Nhập mã" name="categoryCode" th:field="*{id}" required>
+						</div>
+
+						<div class="third-container">
+							<label for="note"><b>Ghi chú</b></label>
+							<textarea id="note" name="note" rows="4" cols="50" placeholder="Thêm ghi chú" th:field="*{ghi_chu}"></textarea>
+
+							<button type="button" class="btn cancel" onclick="closeFormAddCategory()">Thoát</button>
+							<button type="submit" value="Submit" class="btn submit" onclick="javascript:alert('Thêm loại sản phẩm thành công!')">Thêm</button>
+						</div>
+					</form>
+
+				</div>
+			</div>
+			<div id="edit-category-fullscreen-container">
+
+				<div class="form-popup" id="myForm">
+					<form method="POST" th:action="@{/lsp/sua}" th:object="${lsp}" class="form-container">
+						<h1>Chỉnh sửa loại sản phẩm</h1>
+
+						<div class="first-container">
+							<label for="categoryname" id="cn"><b>Tên loại sản phẩm</b></label>
+							<input type="text" placeholder=" Nhập tên" name="categoryName"  th:field="*{ten_loai}" required>
+						</div>
+
+						<div class="second-container">
+							<label for="categorycode" id="cc"><b>Mã sản phẩm</b></label>
+							<input type="text" name="categoryCode" required readonly>
+						</div>
+
+						<div class="third-container">
+							<label for="note"><b>Ghi chú</b></label>
+							<textarea id="note" name="note" rows="4" cols="50" placeholder="Thêm ghi chú" th:field="*{ghi_chu}"></textarea>
+
+							<button type="button" class="btn cancel" onclick="closeFormEditCategory()">Thoát</button>
+							<button type="submit" class="btn submit">Sửa</button>
+						</div>
+					</form>
+
+				</div>
+			</div>
+			
+		</div>
+	</section>
+
+
+	<section class="sideb-reportProduct" id="reportProduct">
+		<div class="header">
+			<div class="nametag">Thống kê sản phẩm theo doanh thu</div>
+		</div>
+		<div class="container">
+			<div class="startdate">
+				<label id="startdate">Ngày bắt đầu</label>
+				<input type="text" name="startDate" readonly>
+			</div>
+			<div class="startdate">
+				<label id="startdate">Ngày kết thúc</label>
+				<input type="text" name="endDate" readonly>
+			</div>
+			<button class="viewreportbtn">Xem báo cáo</button>
+			<table class="tbl">
+				<tr class="tr-border-bottom">
+					<td>Tên sản phẩm</td>
+					<td>Mã</td>
+					<td>Đã bán</td>
+					<td>Doanh thu</td>
+					<td>Ngày bán gần nhất</td>
+				</tr>
+				<tr class="tr-border-bottom">
+					<td>Tivi samsung 43 inch</td>
+					<td>SS43</td>
+					<td>12/td>
+					<td>120000000</td>
+					<td>28/02/2021</td>
+				</tr>
+				<tr class="tr-border-bottom">
+					<td>Tivi sony 50 inch</td>
+					<td>SN50</td>
+					<td>8/td>
+					<td>50000000</td>
+					<td>28/02/2021</td>
+				</tr>
+				<tr class="tr-border-bottom">
+					<td>Máy giặt LG 8kg</td>
+					<td>MGLG8</td>
+					<td>5/td>
+					<td>20000000</td>
+					<td>28/02/2021</td>
+				</tr>
+			</table>
+		</div>
+	</section>
+
+	<section class="sideb-reportCustomer" id="reportCustomer">
+		<div class="header">
+			<div class="nametag">Thống kê khách hàng theo doanh thu</div>
+		</div>
+		<div class="container">
+			<div class="startdate">
+				<label id="startdate">Ngày bắt đầu</label>
+				<input type="text" name="startDate" readonly>
+			</div>
+			<div class="startdate">
+				<label id="startdate">Ngày kết thúc</label>
+				<input type="text" name="endDate" readonly>
+			</div>
+			<button class="viewreportbtn">Xem báo cáo</button>
+			<table class="tbl">
+				<tr class="tr-border-bottom">
+					<td>Tên khách hàng</td>
+					<td>Mã</td>
+					<td>Loại khách hàng</td>
+					<td>Doanh thu</td>
+					<td>Ngày mua gần nhất</td>
+				</tr>
+				<tr class="tr-border-bottom">
+					<td>Nam</td>
+					<td>KH01</td>
+					<td>VIP/td>
+					<td>120000000</td>
+					<td>28/02/2021</td>
+				</tr>
+				<tr class="tr-border-bottom">
+					<td>Minh</td>
+					<td>KH02</td>
+					<td>Thân thiết/td>
+					<td>50000000</td>
+					<td>28/02/2021</td>
+				</tr>
+				<tr class="tr-border-bottom">
+					<td>Mạnh</td>
+					<td>KH03</td>
+					<td>Thường/td>
+					<td>20000000</td>
+					<td>28/02/2021</td>
+				</tr>
+			</table>
+		</div>
+	</section>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<title>Edit Kind of Product</title>
+</head>
+<body>
+	<div align="center">
+		<h1>Edit Kind of Product</h1>
+		<br/>
+		<form action="#" th:action="@{/lsp/sua}" th:object="${lsp}" method="post">
+			<table border="0" cellpadding="10">
+				<tr>
+					<td>ID:</td>
+					<td><input type="text" th:field="*{id}" readonly="readonly" /></td>
+				</tr>			
+				<tr>
+					<td>Tên loại sản phẩm:</td>
+					<td><input type="text" th:field="*{ten_loai}" /></td>
+				</tr>
+				<tr>
+					<td>Ghi chú:</td>
+					<td><input type="text" th:field="*{ghi_chu}" /></td>
+				</tr>				
+								
+				<tr>
+					<td><button type="submit">Lưu</button></td>
+					<td ><a href="/lsp"><button type="submit">Thoát</button></a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>
